@@ -2,10 +2,10 @@ package com.foodtech.ms_factura;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.kafka.annotation.EnableKafka;
+import org.springframework.amqp.rabbit.annotation.EnableRabbit;
 
 @SpringBootApplication
-@EnableKafka
+@EnableRabbit
 public class MsFacturaApplication {
 
 	public static void main(String[] args) {

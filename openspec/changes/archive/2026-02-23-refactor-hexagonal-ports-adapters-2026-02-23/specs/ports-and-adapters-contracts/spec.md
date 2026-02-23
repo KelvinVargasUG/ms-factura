@@ -1,7 +1,5 @@
-## Purpose
+## MODIFIED Requirements
 
-Define ports-and-adapters contracts so use cases are invoked through input ports and side effects are executed through output ports with adapter-limited responsibilities.
-## Requirements
 ### Requirement: Use Cases Exposed Through Input Ports
 Application use cases MUST be invoked through explicit input port interfaces that represent business actions.
 
@@ -46,4 +44,3 @@ Infrastructure adapters MUST handle framework integration, serialization/deseria
 #### Scenario: Validation and status semantics are preserved at boundaries
 - **WHEN** adapters receive invalid or malformed transport payloads
 - **THEN** adapter handling SHALL preserve existing validation/status behavior while preventing transport concerns from leaking into Domain rules
-

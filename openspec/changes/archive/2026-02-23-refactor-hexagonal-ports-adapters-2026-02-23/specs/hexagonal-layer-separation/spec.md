@@ -1,7 +1,5 @@
-## Purpose
+## MODIFIED Requirements
 
-Define architectural boundaries and dependency direction for a hexagonal structure while preserving externally observable behavior.
-## Requirements
 ### Requirement: Enforced Layer Dependency Direction
 The codebase MUST enforce dependency direction such that Infrastructure depends on Application and Domain, Application depends on Domain, and Domain depends on no framework or adapter layer.
 
@@ -31,4 +29,3 @@ The refactor MUST preserve externally observable behavior for existing API and m
 #### Scenario: Existing input channels continue processing equivalently
 - **WHEN** equivalent payloads are received through Kafka and RabbitMQ adapters
 - **THEN** both flows SHALL delegate to the same application use case behavior without changing observable outcomes
-

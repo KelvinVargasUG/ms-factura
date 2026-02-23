@@ -1,7 +1,5 @@
-## Purpose
+## MODIFIED Requirements
 
-Define testability expectations by layer to ensure domain/application isolation, adapter verification, and backward-compatibility coverage during refactor.
-## Requirements
 ### Requirement: Domain and Application Have Isolated Unit Test Coverage
 The project MUST provide unit tests that validate Domain and Application behavior without framework bootstrapping.
 
@@ -46,4 +44,3 @@ The test suite MUST include regression coverage for behavior that must remain un
 #### Scenario: Cross-adapter behavior parity is protected
 - **WHEN** equivalent invoice commands are processed through distinct input adapters
 - **THEN** regression assertions SHALL confirm equivalent use-case outcomes and externally observable behavior
-

@@ -1,5 +1,6 @@
-package com.foodtech.ms_factura.infrastructure;
+package com.foodtech.ms_factura.infrastructure.adapters.output.file;
 
+import com.foodtech.ms_factura.application.ports.output.TxtFacturaGeneratorPort;
 import com.foodtech.ms_factura.domain.Factura;
 import com.foodtech.ms_factura.domain.Producto;
 import lombok.RequiredArgsConstructor;
@@ -15,30 +16,25 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FileTxtFacturaGenerator implements FacturaGeneratorStrategy {
+public class FileTxtFacturaGenerator implements TxtFacturaGeneratorPort {
 
     private static final String FACTURAS_DIR = "/tmp/facturas/";
 
     @Override
     public void generar(Factura factura) {
         try {
-            // Crear directorio si no existe
             Path dirPath = Paths.get(FACTURAS_DIR);
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
             }
 
-            // Generar nombre único para el archivo
             String fileName = "factura_" + UUID.randomUUID() + ".txt";
             Path filePath = dirPath.resolve(fileName);
 
-            // Construir el contenido en formato de tabla
             String content = buildFacturaContent(factura);
-
-            // Escribir al archivo
             Files.write(filePath, content.getBytes());
 
-            log.info("Factura generada y guardada en: {}", filePath.toString());
+            log.info("Factura generada y guardada en: {}", filePath);
 
         } catch (IOException e) {
             log.error("Error al generar la factura", e);

@@ -1,5 +1,6 @@
-package com.foodtech.ms_factura.infrastructure;
+package com.foodtech.ms_factura.infrastructure.adapters.output.file;
 
+import com.foodtech.ms_factura.application.ports.output.PdfFacturaGeneratorPort;
 import com.foodtech.ms_factura.domain.Factura;
 import com.foodtech.ms_factura.domain.Producto;
 import com.itextpdf.kernel.pdf.PdfDocument;
@@ -23,44 +24,37 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
-public class FilePdfFacturaGenerator implements FacturaGeneratorStrategy {
+public class FilePdfFacturaGenerator implements PdfFacturaGeneratorPort {
 
     private static final String FACTURAS_DIR = "/tmp/facturas/";
 
     @Override
     public void generar(Factura factura) {
         try {
-            // Crear directorio si no existe
             Path dirPath = Paths.get(FACTURAS_DIR);
             if (!Files.exists(dirPath)) {
                 Files.createDirectories(dirPath);
             }
 
-            // Generar nombre único para el archivo
             String fileName = "factura_" + UUID.randomUUID() + ".pdf";
             Path filePath = dirPath.resolve(fileName);
 
-            // Crear PDF
             PdfWriter writer = new PdfWriter(filePath.toString());
             PdfDocument pdfDoc = new PdfDocument(writer);
             Document document = new Document(pdfDoc);
 
-            // Título
             document.add(new Paragraph("Factura para: " + factura.getNombreCliente())
                     .setTextAlignment(TextAlignment.CENTER)
                     .setFontSize(18));
 
-            // Tabla
             Table table = new Table(UnitValue.createPercentArray(new float[]{4, 1, 2, 2}));
             table.setWidth(UnitValue.createPercentValue(100));
 
-            // Encabezados
             table.addHeaderCell(new Cell().add(new Paragraph("Producto")));
             table.addHeaderCell(new Cell().add(new Paragraph("Cantidad")));
             table.addHeaderCell(new Cell().add(new Paragraph("Precio")));
             table.addHeaderCell(new Cell().add(new Paragraph("Subtotal")));
 
-            // Productos
             for (Producto producto : factura.getListaProductos()) {
                 double subtotal = producto.getCantidad() * producto.getPrecio();
                 table.addCell(new Cell().add(new Paragraph(producto.getNombre())));
@@ -71,7 +65,6 @@ public class FilePdfFacturaGenerator implements FacturaGeneratorStrategy {
 
             document.add(table);
 
-            // Total
             Paragraph total = new Paragraph("Total: " + String.format("%.2f", factura.getTotal()))
                     .setTextAlignment(TextAlignment.RIGHT)
                     .setFontSize(14);
@@ -79,7 +72,7 @@ public class FilePdfFacturaGenerator implements FacturaGeneratorStrategy {
 
             document.close();
 
-            log.info("Factura PDF generada y guardada en: {}", filePath.toString());
+            log.info("Factura PDF generada y guardada en: {}", filePath);
 
         } catch (IOException e) {
             log.error("Error al generar la factura PDF", e);

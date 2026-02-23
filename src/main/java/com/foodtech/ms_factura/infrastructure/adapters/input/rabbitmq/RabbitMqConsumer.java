@@ -1,7 +1,7 @@
 package com.foodtech.ms_factura.infrastructure.adapters.input.rabbitmq;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodtech.ms_factura.application.GenerarFacturaUseCase;
+import com.foodtech.ms_factura.application.ports.input.GenerarFacturaUseCase;
 import com.foodtech.ms_factura.domain.Factura;
 import com.foodtech.ms_factura.domain.FoodEvent;
 import lombok.RequiredArgsConstructor;

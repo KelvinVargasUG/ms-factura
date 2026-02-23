@@ -1,4 +1,4 @@
-package com.foodtech.ms_factura.application;
+package com.foodtech.ms_factura.application.ports.input;
 
 import com.foodtech.ms_factura.domain.Factura;
 

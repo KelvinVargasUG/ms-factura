@@ -1,39 +1,34 @@
-package com.foodtech.ms_factura;
+package com.foodtech.ms_factura.infrastructure.adapters.input.kafka;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodtech.ms_factura.application.GenerarFacturaUseCase;
+import com.foodtech.ms_factura.application.ports.input.GenerarFacturaUseCase;
 import com.foodtech.ms_factura.domain.Factura;
 import com.foodtech.ms_factura.domain.FoodEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
-// import org.springframework.kafka.annotation.SendTo;
 import org.springframework.messaging.handler.annotation.Payload;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
-public class KafkaConsumer {
+public class KafkaConsumerAdapter {
 
     private final ObjectMapper objectMapper;
     private final GenerarFacturaUseCase generarFacturaUseCase;
 
     @KafkaListener(topics = "create-factura", groupId = "ms-factura-group")
-    // @SendTo("factura-response")
     public String consume(@Payload String message) {
         log.info("Mensaje recibido del tópico 'create-factura': {}", message);
         try {
-            // Paso 1: Deserializar el wrapper FoodEvent
             FoodEvent event = objectMapper.readValue(message, FoodEvent.class);
             log.info("Evento deserializado: eventType={}, eventId={}", event.getEventType(), event.getEventId());
-            
-            // Paso 2: Deserializar el payload interno (String JSON) a Factura
+
             Factura factura = objectMapper.readValue(event.getPayload(), Factura.class);
             log.info("Factura deserializada: cliente={}, total={}", factura.getNombreCliente(), factura.getTotal());
 
-            // Generar la factura
             generarFacturaUseCase.generarFactura(factura);
 
             String response = "Factura procesada exitosamente para: " + factura.getNombreCliente();

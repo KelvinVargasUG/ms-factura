@@ -22,11 +22,11 @@
 
 - [x] 4.1 Add XLSX adapter tests verifying `.xlsx` file creation and expected worksheet/table content
 - [x] 4.2 Add tests verifying numeric cells/format conventions for price, subtotal, and total values
-- [ ] 4.3 Re-run/adjust existing PDF and TXT adapter tests to ensure no regressions
+- [x] 4.3 Re-run/adjust existing PDF and TXT adapter tests to ensure no regressions
 - [x] 4.4 Ensure compatibility coverage confirms unchanged fallback semantics for null/unknown formats
 
 ## 5. Validation and Cleanup
 
-- [ ] 5.1 Run full test suite (`gradle test`) and resolve feature-related failures
+- [x] 5.1 Run full test suite (`gradle test`) and resolve feature-related failures
 - [x] 5.2 Remove temporary/obsolete wiring introduced during migration and keep dependency direction `infrastructure -> application -> domain`
 - [x] 5.3 Update change artifacts/checklist status and verify implementation remains aligned with proposal/spec/design

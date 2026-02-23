@@ -35,6 +35,6 @@
 
 ## 6. Validation and Cleanup
 
-- [ ] 6.1 Run full test suite and fix refactor-induced failures without changing external contracts
+- [x] 6.1 Run full test suite and fix refactor-induced failures without changing external contracts
 - [x] 6.2 Remove obsolete wiring/classes replaced by ports and adapters
 - [x] 6.3 Verify OpenSpec artifacts and mark implementation tasks complete as work is delivered

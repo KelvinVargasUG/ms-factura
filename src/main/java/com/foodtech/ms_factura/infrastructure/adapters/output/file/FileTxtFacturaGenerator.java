@@ -21,7 +21,7 @@ public class FileTxtFacturaGenerator implements TxtFacturaGeneratorPort {
     private static final String FACTURAS_DIR = "/tmp/facturas/";
 
     @Override
-    public void generar(Factura factura) {
+    public Path generar(Factura factura) {
         try {
             Path dirPath = Paths.get(FACTURAS_DIR);
             if (!Files.exists(dirPath)) {
@@ -35,6 +35,7 @@ public class FileTxtFacturaGenerator implements TxtFacturaGeneratorPort {
             Files.write(filePath, content.getBytes());
 
             log.info("Factura generada y guardada en: {}", filePath);
+            return filePath;
 
         } catch (IOException e) {
             log.error("Error al generar la factura", e);

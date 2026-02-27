@@ -1,7 +1,5 @@
-## Purpose
+## MODIFIED Requirements
 
-Define ports-and-adapters contracts so use cases are invoked through input ports and side effects are executed through output ports with adapter-limited responsibilities.
-## Requirements
 ### Requirement: Use Cases Exposed Through Input Ports
 Application use cases MUST be invoked through explicit input port interfaces that represent business actions.
 
@@ -46,4 +44,3 @@ Infrastructure adapters MUST handle framework integration, serialization/deseria
 #### Scenario: Email adapter handles SMTP transport concerns only
 - **WHEN** the notification adapter sends invoice emails
 - **THEN** it SHALL resolve SMTP transport, template rendering, and attachment I/O without introducing domain decision logic
-

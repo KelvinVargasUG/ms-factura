@@ -4,6 +4,7 @@ import java.util.List;
 
 public class Factura {
     private String nombreCliente;
+    private String emailCliente;
     private List<Producto> listaProductos;
     private double total;
     private String formato;
@@ -24,6 +25,14 @@ public class Factura {
 
     public void setNombreCliente(String nombreCliente) {
         this.nombreCliente = nombreCliente;
+    }
+
+    public String getEmailCliente() {
+        return emailCliente;
+    }
+
+    public void setEmailCliente(String emailCliente) {
+        this.emailCliente = emailCliente;
     }
 
     public List<Producto> getListaProductos() {

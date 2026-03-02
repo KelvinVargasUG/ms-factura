@@ -27,7 +27,7 @@ public class FileXlsxFacturaGenerator implements XlsxFacturaGeneratorPort {
     private static final String FACTURAS_DIR = "/tmp/facturas/";
 
     @Override
-    public void generar(Factura factura) {
+    public Path generar(Factura factura) {
         try {
             Path dirPath = Paths.get(FACTURAS_DIR);
             if (!Files.exists(dirPath)) {
@@ -86,6 +86,7 @@ public class FileXlsxFacturaGenerator implements XlsxFacturaGeneratorPort {
             }
 
             log.info("Factura XLSX generada y guardada en: {}", filePath);
+            return filePath;
         } catch (IOException e) {
             log.error("Error al generar la factura XLSX", e);
             throw new RuntimeException("Error al generar la factura XLSX", e);

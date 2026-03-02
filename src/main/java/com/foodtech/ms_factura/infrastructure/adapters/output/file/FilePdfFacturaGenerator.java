@@ -29,7 +29,7 @@ public class FilePdfFacturaGenerator implements PdfFacturaGeneratorPort {
     private static final String FACTURAS_DIR = "/tmp/facturas/";
 
     @Override
-    public void generar(Factura factura) {
+    public Path generar(Factura factura) {
         try {
             Path dirPath = Paths.get(FACTURAS_DIR);
             if (!Files.exists(dirPath)) {
@@ -73,6 +73,7 @@ public class FilePdfFacturaGenerator implements PdfFacturaGeneratorPort {
             document.close();
 
             log.info("Factura PDF generada y guardada en: {}", filePath);
+            return filePath;
 
         } catch (IOException e) {
             log.error("Error al generar la factura PDF", e);

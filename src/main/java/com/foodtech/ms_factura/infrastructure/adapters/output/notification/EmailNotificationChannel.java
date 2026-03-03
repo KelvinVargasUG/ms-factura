@@ -32,19 +32,25 @@ public class EmailNotificationChannel implements NotificationChannel {
 
     @Override
     public void send(NotificationMessage message) {
+        if (from == null || from.isBlank()) {
+            throw new IllegalArgumentException("Propiedad 'notification.email.from' es obligatoria para enviar notificaciones por email");
+        }
+        
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, StandardCharsets.UTF_8.name());
 
-            if (from != null && !from.isBlank()) {
-                helper.setFrom(from);
-            }
+            helper.setFrom(from);
             helper.setTo(message.destinatario());
             helper.setSubject(message.asunto());
             helper.setText(message.cuerpo(), false);
 
             for (Path attachment : message.attachments()) {
-                if (attachment != null && Files.exists(attachment)) {
+                if (attachment != null) {
+                    if (!Files.exists(attachment)) {
+                        throw new IllegalArgumentException(
+                            "Archivo adjunto no existe: " + attachment);
+                    }
                     helper.addAttachment(attachment.getFileName().toString(), attachment.toFile());
                 }
             }

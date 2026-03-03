@@ -5,8 +5,8 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'com.foodtech'
-version = '0.0.1-SNAPSHOT'
+group = 'com.foodtech' 
+version = '0.0.2-RELEASE' 
 description = 'Demo project for Spring Boot'
 
 java {
@@ -75,5 +75,11 @@ jacocoTestReport {
                 '**/*Application.class'
             ])
         }))
+    }
+}
+
+tasks.register("printVersion") {
+    doLast {
+        println(project.version.toString())
     }
 }

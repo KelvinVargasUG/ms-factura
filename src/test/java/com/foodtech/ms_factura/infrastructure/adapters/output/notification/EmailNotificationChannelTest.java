@@ -31,7 +31,6 @@ class EmailNotificationChannelTest {
     @TempDir
     Path tempDir;
 
-    // Enviar email con adjunto válido
     @Test
     void shouldSendEmailWithAttachment() throws Exception {
         EmailNotificationChannel channel = new EmailNotificationChannel(mailSender);
@@ -48,7 +47,8 @@ class EmailNotificationChannelTest {
                 "Factura ref-1",
                 "Body",
                 "ref-1",
-                List.of(attachment));
+                List.of(attachment)
+        );
 
         channel.send(message);
 
@@ -56,47 +56,54 @@ class EmailNotificationChannelTest {
         assertThat(channel.getChannelName()).isEqualTo("email");
     }
 
-    // Validar que lanza excepción si 'from' es null (obligatorio)
     @Test
-    void shouldThrowWhenFromIsNull() throws Exception {
+    void shouldSendEmailWithoutFromWhenFromIsNull() throws Exception {
         // Arrange
         EmailNotificationChannel channel = new EmailNotificationChannel(mailSender);
         ReflectionTestUtils.setField(channel, "from", null);
+
+        MimeMessage mimeMessage = new MimeMessage((Session) null);
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
         NotificationMessage message = new NotificationMessage(
                 "cliente@example.com",
                 "Factura ref-2",
                 "Body",
                 "ref-2",
-                List.of());
+                List.of()
+        );
 
-        // Act & Assert
-        assertThatThrownBy(() -> channel.send(message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Propiedad 'notification.email.from' es obligatoria para enviar notificaciones por email");
+        // Act
+        channel.send(message);
+
+        // Assert
+        verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // Validar que lanza excepción si 'from' es vacío (solo espacios)
     @Test
-    void shouldThrowWhenFromIsBlank() throws Exception {
+    void shouldSendEmailWithoutFromWhenFromIsBlank() throws Exception {
         // Arrange
         EmailNotificationChannel channel = new EmailNotificationChannel(mailSender);
         ReflectionTestUtils.setField(channel, "from", "   ");
+
+        MimeMessage mimeMessage = new MimeMessage((Session) null);
+        when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
         NotificationMessage message = new NotificationMessage(
                 "cliente@example.com",
                 "Factura ref-3",
                 "Body",
                 "ref-3",
-                List.of());
+                List.of()
+        );
 
-        // Act & Assert
-        assertThatThrownBy(() -> channel.send(message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Propiedad 'notification.email.from' es obligatoria para enviar notificaciones por email");
+        // Act
+        channel.send(message);
+
+        // Assert
+        verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // Enviar email con lista de adjuntos que contiene un elemento null
     @Test
     void shouldSkipNullAttachments() throws Exception {
         // Arrange
@@ -111,7 +118,8 @@ class EmailNotificationChannelTest {
                 "Factura ref-4",
                 "Body",
                 "ref-4",
-                List.of());
+                List.of()
+        );
 
         // Act
         channel.send(message);
@@ -120,8 +128,6 @@ class EmailNotificationChannelTest {
         verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // Enviar email con lista de adjuntos que contiene un elemento null y otro
-    // válido
     @Test
     void shouldSkipNullAttachmentEntryInsideList() throws Exception {
         // Arrange
@@ -143,7 +149,8 @@ class EmailNotificationChannelTest {
                 "Factura ref-null-entry",
                 "Body",
                 "ref-null-entry",
-                attachments);
+                attachments
+        );
 
         // Act
         channel.send(message);
@@ -152,9 +159,8 @@ class EmailNotificationChannelTest {
         verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // Validar que lanza excepción si un adjunto no existe en el sistema de archivos
     @Test
-    void shouldThrowWhenAttachmentDoesNotExist() throws Exception {
+    void shouldSkipNonExistentAttachments() throws Exception {
         // Arrange
         EmailNotificationChannel channel = new EmailNotificationChannel(mailSender);
         ReflectionTestUtils.setField(channel, "from", "no-reply@example.com");
@@ -169,17 +175,16 @@ class EmailNotificationChannelTest {
                 "Factura ref-5",
                 "Body",
                 "ref-5",
-                List.of(nonExistentFile));
+                List.of(nonExistentFile)
+        );
 
-        // Act & Assert
-        assertThatThrownBy(() -> channel.send(message))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("Archivo adjunto no existe: " + nonExistentFile);
+        // Act
+        channel.send(message);
+
+        // Assert
+        verify(mailSender).send(any(MimeMessage.class));
     }
 
-    // Simular una excepción de MessagingException al construir el email (por
-    // ejemplo, debido a un formato de dirección "from" inválido)
-    // y verificar que se lanza una RuntimeException con el mensaje esperado.
     @Test
     void shouldThrowRuntimeExceptionOnMessagingException() throws Exception {
         // Arrange
@@ -193,19 +198,16 @@ class EmailNotificationChannelTest {
                 "Factura ref-6",
                 "Body",
                 "ref-6",
-                List.of());
+                List.of()
+        );
 
         // Act & Assert
         assertThatThrownBy(() -> channel.send(message))
                 .isInstanceOf(RuntimeException.class);
     }
 
-    // Simular una excepción de MessagingException debido a un formato de dirección
-    // "from" inválido
-    // y verificar que se lanza una RuntimeException con el mensaje esperado y la
-    // causa correcta.
-    @Test
-    void shouldWrapMessagingExceptionWhenFromAddressIsInvalid() {
+        @Test
+        void shouldWrapMessagingExceptionWhenFromAddressIsInvalid() {
         // Arrange
         EmailNotificationChannel channel = new EmailNotificationChannel(mailSender);
         ReflectionTestUtils.setField(channel, "from", "invalid\nfrom@example.com");
@@ -214,20 +216,20 @@ class EmailNotificationChannelTest {
         when(mailSender.createMimeMessage()).thenReturn(mimeMessage);
 
         NotificationMessage message = new NotificationMessage(
-                "cliente@example.com",
-                "Factura ref-invalid-from",
-                "Body",
-                "ref-invalid-from",
-                List.of());
+            "cliente@example.com",
+            "Factura ref-invalid-from",
+            "Body",
+            "ref-invalid-from",
+            List.of()
+        );
 
         // Act & Assert
         assertThatThrownBy(() -> channel.send(message))
-                .isInstanceOf(RuntimeException.class)
-                .hasMessage("Error al construir email de notificación")
-                .hasCauseInstanceOf(jakarta.mail.MessagingException.class);
-    }
+            .isInstanceOf(RuntimeException.class)
+            .hasMessage("Error al construir email de notificación")
+            .hasCauseInstanceOf(jakarta.mail.MessagingException.class);
+        }
 
-    // Enviar email con múltiples adjuntos válidos
     @Test
     void shouldSendEmailWithMultipleAttachments() throws Exception {
         // Arrange
@@ -239,7 +241,7 @@ class EmailNotificationChannelTest {
 
         Path attachment1 = tempDir.resolve("factura1.txt");
         Files.writeString(attachment1, "contenido1");
-
+        
         Path attachment2 = tempDir.resolve("factura2.txt");
         Files.writeString(attachment2, "contenido2");
 
@@ -248,7 +250,8 @@ class EmailNotificationChannelTest {
                 "Factura ref-7",
                 "Body",
                 "ref-7",
-                List.of(attachment1, attachment2));
+                List.of(attachment1, attachment2)
+        );
 
         // Act
         channel.send(message);

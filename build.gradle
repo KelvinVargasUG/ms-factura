@@ -5,10 +5,10 @@ plugins {
 	id 'jacoco'
 }
 
-group = 'com.foodtech' 
-version = '0.0.3-RELEASE' 
+group = 'com.foodtech'
+version = '0.0.1-SNAPSHOT'
 description = 'Demo project for Spring Boot'
- 
+
 java {
 	toolchain {
 		languageVersion = JavaLanguageVersion.of(17)
@@ -27,7 +27,7 @@ dependencies {
 	implementation 'com.itextpdf:itext7-core:7.2.5'
 	implementation 'org.apache.poi:poi-ooxml:5.2.5'
 	implementation 'org.springframework.boot:spring-boot-starter-mail'
-	compileOnly 'org.projectlombok:lombok' 
+	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'com.tngtech.archunit:archunit-junit5:1.2.1'
@@ -50,14 +50,14 @@ tasks.named('jacocoTestReport') {
 		xml.required = true
 		html.required = true
 		csv.required = false
-	} 
+	}
 }
 
 tasks.named('jacocoTestCoverageVerification') {
 	dependsOn tasks.named('test')
 	violationRules {
 		rule {
-			limit { 
+			limit {
 				minimum = 0.90
 			}
 		}
@@ -75,11 +75,5 @@ jacocoTestReport {
                 '**/*Application.class'
             ])
         }))
-    }
-}
-
-tasks.register("printVersion") {
-    doLast {
-        println(project.version.toString())
     }
 }

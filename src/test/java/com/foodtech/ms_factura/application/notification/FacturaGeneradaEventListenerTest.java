@@ -22,7 +22,6 @@ class FacturaGeneradaEventListenerTest {
     @Mock
     private NotificationDispatchService notificationDispatchService;
 
-    // Validar que construye mensaje correctamente y lo despacha
     @Test
     void shouldBuildAndDispatchNotificationMessage() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -37,7 +36,8 @@ class FacturaGeneradaEventListenerTest {
                 "ref-123",
                 factura,
                 List.of(Path.of("/tmp/facturas/factura_ref-123.pdf")),
-                LocalDateTime.of(2026, 2, 25, 10, 0));
+                LocalDateTime.of(2026, 2, 25, 10, 0)
+        );
 
         listener.onFacturaGenerada(event);
 
@@ -51,7 +51,6 @@ class FacturaGeneradaEventListenerTest {
         assertThat(message.attachments()).hasSize(1);
     }
 
-    // Validar que si el email del cliente es null, no se despacha notificación
     @Test
     void shouldSkipDispatchWhenRecipientIsMissing() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -60,16 +59,16 @@ class FacturaGeneradaEventListenerTest {
 
         FacturaGeneradaEvent event = new FacturaGeneradaEvent(
                 "ref-456",
-                factura,
+            factura,
                 List.of(),
-                LocalDateTime.now());
+                LocalDateTime.now()
+        );
 
         listener.onFacturaGenerada(event);
 
         verify(notificationDispatchService, never()).dispatch(org.mockito.ArgumentMatchers.any());
     }
 
-    // Validar que si la factura es null, no se despacha notificación
     @Test
     void shouldSkipDispatchWhenFacturaIsNull() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -78,14 +77,14 @@ class FacturaGeneradaEventListenerTest {
                 "ref-789",
                 null,
                 List.of(),
-                LocalDateTime.now());
+                LocalDateTime.now()
+        );
 
         listener.onFacturaGenerada(event);
 
         verify(notificationDispatchService, never()).dispatch(org.mockito.ArgumentMatchers.any());
     }
 
-    // Validar que si el destinatario es solo espacios, no se despacha notificación
     @Test
     void shouldSkipDispatchWhenRecipientIsBlank() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -96,14 +95,14 @@ class FacturaGeneradaEventListenerTest {
                 "ref-999",
                 factura,
                 List.of(),
-                LocalDateTime.now());
+                LocalDateTime.now()
+        );
 
         listener.onFacturaGenerada(event);
 
         verify(notificationDispatchService, never()).dispatch(org.mockito.ArgumentMatchers.any());
     }
 
-    // Validar que si el template tiene placeholders pero no se pasan datos, se renderizan con valores vacíos
     @Test
     void shouldRenderEmptyValuesWhenDataIsMissing() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -117,7 +116,8 @@ class FacturaGeneradaEventListenerTest {
                 null,
                 factura,
                 List.of(),
-                null);
+                null
+        );
 
         listener.onFacturaGenerada(event);
 
@@ -129,7 +129,6 @@ class FacturaGeneradaEventListenerTest {
         assertThat(message.cuerpo()).isEqualTo("Cliente  fecha ");
     }
 
-    // Validar que si el nombre del cliente es null, se renderiza como vacío en el cuerpo del mensaje
     @Test
     void shouldRenderEmptyCustomerWhenNombreClienteIsNull() {
         FacturaGeneradaEventListener listener = new FacturaGeneradaEventListener(notificationDispatchService);
@@ -144,7 +143,8 @@ class FacturaGeneradaEventListenerTest {
                 "ref-321",
                 factura,
                 List.of(),
-                LocalDateTime.of(2026, 2, 26, 8, 30));
+                LocalDateTime.of(2026, 2, 26, 8, 30)
+        );
 
         listener.onFacturaGenerada(event);
 

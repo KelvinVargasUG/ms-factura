@@ -19,9 +19,9 @@ public class KafkaConsumerAdapter {
     private final ObjectMapper objectMapper;
     private final GenerarFacturaUseCase generarFacturaUseCase;
 
-    @KafkaListener(topics = "${foodtech.kafka.topic}", groupId = "${spring.kafka.consumer.group-id}")
+    @KafkaListener(topics = "create-factura", groupId = "ms-factura-group")
     public String consume(@Payload String message) {
-        log.info("Mensaje recibido del tópico Kafka: {}", message);
+        log.info("Mensaje recibido del tópico 'create-factura': {}", message);
         try {
             FoodEvent event = objectMapper.readValue(message, FoodEvent.class);
             log.info("Evento deserializado: eventType={}, eventId={}", event.getEventType(), event.getEventId());

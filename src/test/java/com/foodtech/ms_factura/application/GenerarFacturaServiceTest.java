@@ -40,6 +40,7 @@ class GenerarFacturaServiceTest {
     @InjectMocks
     private GenerarFacturaService generarFacturaService;
 
+    // Validar que se genera factura en txt por defecto y se publica evento
     @Test
     void testGenerarFacturaTxt() {
         Producto producto1 = new Producto("plato fuerte", 1, 10.0);
@@ -55,6 +56,7 @@ class GenerarFacturaServiceTest {
         verifyNoInteractions(pdfFacturaGeneratorPort, xlsxFacturaGeneratorPort);
     }
 
+    // Validar que si se pasa formato PDF, se llama al puerto correspondiente
     @Test
     void testGenerarFacturaPdf() {
         Producto producto1 = new Producto("plato fuerte", 1, 10.0);
@@ -70,6 +72,7 @@ class GenerarFacturaServiceTest {
         verifyNoInteractions(txtFacturaGeneratorPort, xlsxFacturaGeneratorPort);
     }
 
+    // Validar que si se pasa formato XLSX, se llama al generador correspondiente
     @Test
     void testGenerarFacturaXlsx() {
         Producto producto1 = new Producto("plato fuerte", 1, 10.0);
@@ -85,6 +88,7 @@ class GenerarFacturaServiceTest {
         verifyNoInteractions(txtFacturaGeneratorPort, pdfFacturaGeneratorPort);
     }
 
+    // Validar que si no se especifica formato, se genera en txt por defecto
     @Test
     void testGenerarFacturaDefaultTxt() {
         Producto producto1 = new Producto("plato fuerte", 1, 10.0);
@@ -100,27 +104,13 @@ class GenerarFacturaServiceTest {
         verifyNoInteractions(pdfFacturaGeneratorPort, xlsxFacturaGeneratorPort);
     }
 
+    // Validar que si se pasa un formato desconocido, se cae al txt por defecto
     @Test
     void testGenerarFacturaUnknownFormatFallbackTxt() {
         Producto producto1 = new Producto("plato fuerte", 1, 10.0);
         Producto producto2 = new Producto("plato entrada", 1, 5.0);
         List<Producto> productos = Arrays.asList(producto1, producto2);
         Factura factura = new Factura("Kelvin", productos, 15.0, "CSV");
-        when(txtFacturaGeneratorPort.generar(factura)).thenReturn(Path.of("/tmp/facturas/factura_test.txt"));
-
-        generarFacturaService.generarFactura(factura);
-
-        verify(txtFacturaGeneratorPort).generar(factura);
-        verify(applicationEventPublisher).publishEvent(any(FacturaGeneradaEvent.class));
-        verifyNoInteractions(pdfFacturaGeneratorPort, xlsxFacturaGeneratorPort);
-    }
-
-    @Test
-    void testGenerarFacturaIncorrectTypeFallbackTxt() {
-        Producto producto1 = new Producto("plato fuerte", 1, 10.0);
-        Producto producto2 = new Producto("plato entrada", 1, 5.0);
-        List<Producto> productos = Arrays.asList(producto1, producto2);
-        Factura factura = new Factura("Kelvin", productos, 15.0, "INVALID_TYPE");
         when(txtFacturaGeneratorPort.generar(factura)).thenReturn(Path.of("/tmp/facturas/factura_test.txt"));
 
         generarFacturaService.generarFactura(factura);

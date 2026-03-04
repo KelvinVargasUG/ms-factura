@@ -14,32 +14,47 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.AvoidCatchingGenericException"})
 public class KafkaConsumerAdapter {
 
     private final ObjectMapper objectMapper;
-    private final GenerarFacturaUseCase generarFacturaUseCase;
+    private final GenerarFacturaUseCase facturaUseCase;
 
     @KafkaListener(topics = "${foodtech.kafka.topic}", groupId = "${spring.kafka.consumer.group-id}")
     public String consume(@Payload String message) {
-        log.info("Mensaje recibido del tópico Kafka: {}", message);
+        if (log.isInfoEnabled()) {
+            log.info("Mensaje recibido del tópico Kafka: {}", message);
+        }
+        String response;
         try {
             FoodEvent event = objectMapper.readValue(message, FoodEvent.class);
-            log.info("Evento deserializado: eventType={}, eventId={}", event.getEventType(), event.getEventId());
+            String eventType = event.getEventType();
+            String eventId = event.getEventId();
+            String payload = event.getPayload();
+            if (log.isInfoEnabled()) {
+                log.info("Evento deserializado: eventType={}, eventId={}", eventType, eventId);
+            }
 
-            Factura factura = objectMapper.readValue(event.getPayload(), Factura.class);
-            log.info("Factura deserializada: cliente={}, total={}", factura.getNombreCliente(), factura.getTotal());
+            Factura factura = objectMapper.readValue(payload, Factura.class);
+            String customerName = factura.getNombreCliente();
+            double total = factura.getTotal();
+            if (log.isInfoEnabled()) {
+                log.info("Factura deserializada: cliente={}, total={}", customerName, total);
+            }
 
-            generarFacturaUseCase.generarFactura(factura);
+            facturaUseCase.generarFactura(factura);
 
-            String response = "Factura procesada exitosamente para: " + factura.getNombreCliente();
-            log.info("Enviando respuesta: {}", response);
-            return response;
-        } catch (JsonProcessingException e) {
-            log.error("Error al deserializar el mensaje JSON", e);
-            return "Error al procesar la factura: " + e.getMessage();
-        } catch (Exception e) {
-            log.error("Error al generar la factura", e);
-            return "Error al generar la factura: " + e.getMessage();
+            response = "Factura procesada exitosamente para: " + customerName;
+        } catch (JsonProcessingException jsonException) {
+            log.error("Error al deserializar el mensaje JSON", jsonException);
+            response = "Error al procesar la factura: " + jsonException.getMessage();
+        } catch (RuntimeException runtimeException) {
+            log.error("Error al generar la factura", runtimeException);
+            response = "Error al generar la factura: " + runtimeException.getMessage();
         }
+        if (log.isInfoEnabled()) {
+            log.info("Enviando respuesta: {}", response);
+        }
+        return response;
     }
 }

@@ -1,8 +1,7 @@
 package com.foodtech.ms_factura.infrastructure.adapters.output.file;
 
-import com.foodtech.ms_factura.domain.Factura;
-import com.foodtech.ms_factura.domain.Producto;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -11,10 +10,18 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
+import com.foodtech.ms_factura.domain.Factura;
+import com.foodtech.ms_factura.domain.Producto;
+
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.JUnitTestContainsTooManyAsserts", "PMD.LawOfDemeter",
+        "PMD.AvoidDuplicateLiterals", "PMD.SignatureDeclareThrowsException", "PMD.AvoidThrowingRawExceptionTypes" })
+@Tag("component")
 class FileTxtFacturaGeneratorTest {
+
+    private static final String FACTURA_PATH = "/tmp/facturas/";
 
     private final FileTxtFacturaGenerator generator = new FileTxtFacturaGenerator();
 
@@ -27,7 +34,7 @@ class FileTxtFacturaGeneratorTest {
 
         generator.generar(factura);
 
-        Path facturasDir = Path.of("/tmp/facturas/");
+        Path facturasDir = Path.of(FACTURA_PATH);
         assertThat(Files.exists(facturasDir)).isTrue();
 
         List<Path> txtFiles = Files.list(facturasDir)
@@ -55,7 +62,7 @@ class FileTxtFacturaGeneratorTest {
         Path generatedFile = generator.generar(factura);
 
         // Assert
-        assertThat(Files.exists(Path.of("/tmp/facturas/"))).isTrue();
+        assertThat(Files.exists(Path.of(FACTURA_PATH))).isTrue();
         assertThat(generatedFile).exists();
     }
 
@@ -79,7 +86,7 @@ class FileTxtFacturaGeneratorTest {
     }
 
     private void deleteFacturasPath() throws IOException {
-        Path facturasPath = Path.of("/tmp/facturas/");
+        Path facturasPath = Path.of(FACTURA_PATH);
         if (!Files.exists(facturasPath)) {
             return;
         }

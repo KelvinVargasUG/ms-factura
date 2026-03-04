@@ -2,6 +2,7 @@ package com.foodtech.ms_factura.domain;
 
 import java.time.LocalDateTime;
 
+@SuppressWarnings({"PMD.DataClass", "PMD.CyclomaticComplexity"})
 public class FoodEvent {
     private String eventId;
     private String eventType;

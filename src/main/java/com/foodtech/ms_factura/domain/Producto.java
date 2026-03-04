@@ -1,5 +1,6 @@
 package com.foodtech.ms_factura.domain;
 
+@SuppressWarnings("PMD.DataClass")
 public class Producto {
     private String nombre;
     private int cantidad;

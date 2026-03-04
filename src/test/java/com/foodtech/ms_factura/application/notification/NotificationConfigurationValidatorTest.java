@@ -1,18 +1,24 @@
 package com.foodtech.ms_factura.application.notification;
 
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.springframework.test.util.ReflectionTestUtils;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.LongVariable" })
+@Tag("unit")
 class NotificationConfigurationValidatorTest {
+
+    private static final String FIELD_NOTIFICATION_ENABLED = "notificationEnabled";
+    private static final String FIELD_CONFIGURED_CHANNEL = "configuredChannel";
 
     @Test
     void shouldValidateWithoutThrowingWhenConfigurationIsIncomplete() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "sms");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "sms");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -22,8 +28,8 @@ class NotificationConfigurationValidatorTest {
     void shouldReturnEarlyWhenNotificationsAreDisabled() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", false);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "email");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, false);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "email");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -33,8 +39,8 @@ class NotificationConfigurationValidatorTest {
     void shouldLogWarnWhenChannelIsNotEmail() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "sms");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "sms");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -44,8 +50,8 @@ class NotificationConfigurationValidatorTest {
     void shouldValidateWithoutThrowingWhenChannelIsNull() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", null);
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, null);
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -55,8 +61,8 @@ class NotificationConfigurationValidatorTest {
     void shouldValidateWithoutThrowingWhenChannelIsBlank() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "   ");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "   ");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -66,8 +72,8 @@ class NotificationConfigurationValidatorTest {
     void shouldValidateSuccessfullyWithValidConfiguration() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "email");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "email");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());
@@ -77,8 +83,8 @@ class NotificationConfigurationValidatorTest {
     void shouldHandleCaseInsensitiveChannelName() {
         // Arrange
         NotificationConfigurationValidator validator = new NotificationConfigurationValidator();
-        ReflectionTestUtils.setField(validator, "notificationEnabled", true);
-        ReflectionTestUtils.setField(validator, "configuredChannel", "EMAIL");
+        ReflectionTestUtils.setField(validator, FIELD_NOTIFICATION_ENABLED, true);
+        ReflectionTestUtils.setField(validator, FIELD_CONFIGURED_CHANNEL, "EMAIL");
 
         // Act & Assert
         assertDoesNotThrow(() -> validator.validate());

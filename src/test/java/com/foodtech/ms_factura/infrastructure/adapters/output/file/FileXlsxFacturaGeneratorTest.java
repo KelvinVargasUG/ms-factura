@@ -1,11 +1,7 @@
 package com.foodtech.ms_factura.infrastructure.adapters.output.file;
 
-import com.foodtech.ms_factura.domain.Factura;
-import com.foodtech.ms_factura.domain.Producto;
-import org.apache.poi.ss.usermodel.CellType;
-import org.apache.poi.xssf.usermodel.XSSFSheet;
-import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import org.junit.jupiter.api.Test;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -16,10 +12,22 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
 
+import com.foodtech.ms_factura.domain.Factura;
+import com.foodtech.ms_factura.domain.Producto;
+
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.JUnitTestContainsTooManyAsserts", "PMD.LawOfDemeter",
+        "PMD.AvoidDuplicateLiterals", "PMD.SignatureDeclareThrowsException", "PMD.OnlyOneReturn",
+        "PMD.AvoidThrowingRawExceptionTypes" })
+@Tag("component")
 class FileXlsxFacturaGeneratorTest {
+
+    private static final String FACTURA_PATH = "/tmp/facturas/";
 
     private final FileXlsxFacturaGenerator generator = new FileXlsxFacturaGenerator();
 
@@ -35,7 +43,7 @@ class FileXlsxFacturaGeneratorTest {
         Path xlsxFile = findLatestXlsxFile();
 
         try (InputStream inputStream = Files.newInputStream(xlsxFile);
-             XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
+                XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
 
             XSSFSheet sheet = workbook.getSheet("Factura");
             assertThat(sheet).isNotNull();
@@ -66,7 +74,7 @@ class FileXlsxFacturaGeneratorTest {
 
         Path xlsxFile = findLatestXlsxFile();
         try (InputStream inputStream = Files.newInputStream(xlsxFile);
-             XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
+                XSSFWorkbook workbook = new XSSFWorkbook(inputStream)) {
 
             XSSFSheet sheet = workbook.getSheet("Factura");
 
@@ -96,7 +104,7 @@ class FileXlsxFacturaGeneratorTest {
         Path generatedFile = generator.generar(factura);
 
         // Assert
-        assertThat(Files.exists(Path.of("/tmp/facturas/"))).isTrue();
+        assertThat(Files.exists(Path.of(FACTURA_PATH))).isTrue();
         assertThat(generatedFile).exists();
     }
 
@@ -104,7 +112,7 @@ class FileXlsxFacturaGeneratorTest {
     void shouldThrowRuntimeExceptionWhenFacturaPathIsAFile() throws IOException {
         // Arrange
         deleteFacturasPath();
-        Path facturasPath = Path.of("/tmp/facturas/");
+        Path facturasPath = Path.of(FACTURA_PATH);
         Files.writeString(facturasPath, "not-a-directory");
 
         Producto producto = new Producto("plato fuerte", 1, 10.0);
@@ -120,7 +128,7 @@ class FileXlsxFacturaGeneratorTest {
     }
 
     private Path findLatestXlsxFile() throws IOException {
-        Path facturasDir = Path.of("/tmp/facturas/");
+        Path facturasDir = Path.of(FACTURA_PATH);
         assertThat(Files.exists(facturasDir)).isTrue();
 
         return Files.list(facturasDir)
@@ -138,7 +146,7 @@ class FileXlsxFacturaGeneratorTest {
     }
 
     private void deleteFacturasPath() throws IOException {
-        Path facturasPath = Path.of("/tmp/facturas/");
+        Path facturasPath = Path.of(FACTURA_PATH);
         if (!Files.exists(facturasPath)) {
             return;
         }

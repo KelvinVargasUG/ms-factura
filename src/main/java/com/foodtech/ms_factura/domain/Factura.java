@@ -2,6 +2,7 @@ package com.foodtech.ms_factura.domain;
 
 import java.util.List;
 
+@SuppressWarnings({"PMD.DataClass", "PMD.CyclomaticComplexity"})
 public class Factura {
     private String nombreCliente;
     private String emailCliente;

@@ -1,12 +1,17 @@
 package com.foodtech.ms_factura.domain;
 
-import org.junit.jupiter.api.Test;
-
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import java.util.List;
+
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.CyclomaticComplexity", "PMD.JUnitTestContainsTooManyAsserts",
+        "PMD.JUnitAssertionsShouldIncludeMessage", "PMD.LawOfDemeter", "PMD.AvoidDuplicateLiterals",
+        "PMD.UseUnderscoresInNumericLiterals" })
+@Tag("unit")
 class FacturaTest {
 
     @Test
@@ -27,8 +32,7 @@ class FacturaTest {
         // Arrange
         List<Producto> productos = List.of(
                 new Producto("Arroz", 10, 2.50),
-                new Producto("Pasta", 5, 3.00)
-        );
+                new Producto("Pasta", 5, 3.00));
 
         // Act
         Factura factura = new Factura("Juan Pérez", productos, 50.50, "PDF");
@@ -70,8 +74,7 @@ class FacturaTest {
         Factura factura = new Factura();
         List<Producto> productos = List.of(
                 new Producto("Tomate", 20, 1.50),
-                new Producto("Cebolla", 15, 0.75)
-        );
+                new Producto("Cebolla", 15, 0.75));
 
         // Act
         factura.setListaProductos(productos);
@@ -178,8 +181,7 @@ class FacturaTest {
         List<Producto> productos = List.of(
                 new Producto("Ajo", 3, 0.50),
                 new Producto("Pimienta", 2, 2.00),
-                new Producto("Sal", 5, 1.00)
-        );
+                new Producto("Sal", 5, 1.00));
 
         // Act
         factura.setListaProductos(productos);

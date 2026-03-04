@@ -1,10 +1,15 @@
 package com.foodtech.ms_factura.domain;
 
-import org.junit.jupiter.api.Test;
-
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
+import org.junit.jupiter.api.Tag;
+import org.junit.jupiter.api.Test;
+
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.JUnitTestContainsTooManyAsserts",
+        "PMD.JUnitAssertionsShouldIncludeMessage", "PMD.LiteralShouldBeUnderscore",
+        "PMD.UseUnderscoresInNumericLiterals", "PMD.CyclomaticComplexity" })
+@Tag("unit")
 class ProductoTest {
 
     @Test

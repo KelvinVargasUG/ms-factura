@@ -1,0 +1,21 @@
+name: CI
+
+on:
+  push:
+    branches: [ "develop" ]
+  pull_request:
+
+jobs:
+  pipeline:
+    permissions:
+      contents: read
+      security-events: write
+      pull-requests: write
+    uses: KelvinVargasUG/ci-templates/.github/workflows/pr-ms-spring_boot.yml@main
+    with: 
+      java_version: "21" 
+      promote_branch: "release"  
+    # secrets: 
+    #   REGISTRY_USERNAME: ${{ secrets.DOCKERHUB }}
+    #   REGISTRY_PASSWORD: ${{ secrets.REGISTRY_PASSWORD }}
+    # 83f915ef-95c4-433f-8de7-ba99dd2fa2a9 

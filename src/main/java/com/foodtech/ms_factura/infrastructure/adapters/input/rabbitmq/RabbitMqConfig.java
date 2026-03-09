@@ -16,7 +16,11 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitAdmin;
 
 @Configuration
+@SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.LawOfDemeter"})
 public class RabbitMqConfig {
+
+    public RabbitMqConfig() {
+    }
 
     @Value("${foodtech.rabbitmq.queue}")
     private String queueName;
@@ -48,7 +52,8 @@ public class RabbitMqConfig {
 
     @Bean
     public Binding binding(Queue queue, DirectExchange exchange) {
-        return BindingBuilder.bind(queue).to(exchange).with(routingKey);
+        BindingBuilder.DirectExchangeRoutingKeyConfigurer configurer = BindingBuilder.bind(queue).to(exchange);
+        return configurer.with(routingKey);
     }
 
     @Bean

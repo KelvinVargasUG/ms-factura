@@ -16,6 +16,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 @RequiredArgsConstructor
+@SuppressWarnings("PMD.LawOfDemeter")
 public class FileTxtFacturaGenerator implements TxtFacturaGeneratorPort {
 
     private static final String FACTURAS_DIR = "/tmp/facturas/";
@@ -39,28 +40,37 @@ public class FileTxtFacturaGenerator implements TxtFacturaGeneratorPort {
 
         } catch (IOException e) {
             log.error("Error al generar la factura", e);
-            throw new RuntimeException("Error al generar la factura", e);
+            throw new IllegalStateException("Error al generar la factura", e);
         }
     }
 
     private String buildFacturaContent(Factura factura) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Factura para: ").append(factura.getNombreCliente()).append("\n\n");
-        sb.append(String.format("%-20s %-10s %-10s %-10s\n", "Producto", "Cantidad", "Precio", "Subtotal"));
-        sb.append("-".repeat(50)).append("\n");
+        String customerName = factura.getNombreCliente();
+        double totalAmount = factura.getTotal();
+        var productos = factura.getListaProductos();
+        StringBuilder stringBuilder = new StringBuilder(256);
+        stringBuilder.append("Factura para: ").append(customerName).append("\n\n");
+        
+        String headerLine = String.format("%-20s %-10s %-10s %-10s\n", "Producto", "Cantidad", "Precio", "Subtotal");
+        stringBuilder.append(headerLine);
+        
+        String separator = "-".repeat(50).concat("\n");
+        stringBuilder.append(separator);
 
-        for (Producto producto : factura.getListaProductos()) {
+        for (Producto producto : productos) {
             double subtotal = producto.getCantidad() * producto.getPrecio();
-            sb.append(String.format("%-20s %-10d %-10.2f %-10.2f\n",
+            String productLine = String.format("%-20s %-10d %-10.2f %-10.2f\n",
                     producto.getNombre(),
                     producto.getCantidad(),
                     producto.getPrecio(),
-                    subtotal));
+                    subtotal);
+            stringBuilder.append(productLine);
         }
 
-        sb.append("-".repeat(50)).append("\n");
-        sb.append(String.format("%40s %.2f\n", "Total:", factura.getTotal()));
+        stringBuilder.append(separator);
+        String totalLine = String.format("%40s %.2f\n", "Total:", totalAmount);
+        stringBuilder.append(totalLine);
 
-        return sb.toString();
+        return stringBuilder.toString();
     }
 }

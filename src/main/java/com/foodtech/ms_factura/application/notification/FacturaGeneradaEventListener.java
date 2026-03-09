@@ -12,9 +12,10 @@ import java.time.format.DateTimeFormatter;
 @Component
 @RequiredArgsConstructor
 @Slf4j
+    @SuppressWarnings({"PMD.LawOfDemeter", "PMD.CyclomaticComplexity"})
 public class FacturaGeneradaEventListener {
 
-    private final NotificationDispatchService notificationDispatchService;
+    private final NotificationDispatchService dispatchService;
 
     @Value("${notification.email.subject-template:Factura generada {invoiceRef}}")
     private String subjectTemplate;
@@ -25,34 +26,43 @@ public class FacturaGeneradaEventListener {
     @Async("notificationTaskExecutor")
     @EventListener
     public void onFacturaGenerada(FacturaGeneradaEvent event) {
-        String recipient = event.factura() == null ? null : event.factura().getEmailCliente();
+        String invoiceRef = event.invoiceRef();
+        var factura = event.factura();
+        String recipient = factura == null ? null : factura.getEmailCliente();
         if (recipient == null || recipient.isBlank()) {
-            log.warn("No se envía notificación: emailCliente no configurado en payload invoiceRef={}", event.invoiceRef());
+            if (log.isWarnEnabled()) {
+                log.warn("No se envía notificación: emailCliente no configurado en payload invoiceRef={}", invoiceRef);
+            }
             return;
         }
 
+        var attachments = event.attachments();
         NotificationMessage message = new NotificationMessage(
                 recipient,
                 render(subjectTemplate, event),
                 render(bodyTemplate, event),
-                event.invoiceRef(),
-                event.attachments()
+            invoiceRef,
+            attachments
         );
 
-        notificationDispatchService.dispatch(message);
+        dispatchService.dispatch(message);
     }
 
     private String render(String template, FacturaGeneradaEvent event) {
-        String generatedDate = event.generatedAt() == null
-                ? ""
-                : event.generatedAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
-        String customer = event.factura() == null || event.factura().getNombreCliente() == null
-                ? ""
-                : event.factura().getNombreCliente();
+        String invoiceRef = event.invoiceRef();
+        var factura = event.factura();
+        var generatedAt = event.generatedAt();
+        String generatedDate = generatedAt == null
+            ? ""
+            : generatedAt.format(DateTimeFormatter.ISO_LOCAL_DATE_TIME);
+        String customer = factura == null || factura.getNombreCliente() == null
+            ? ""
+            : factura.getNombreCliente();
 
-        return template
-                .replace("{invoiceRef}", event.invoiceRef() == null ? "" : event.invoiceRef())
-                .replace("{date}", generatedDate)
-                .replace("{customer}", customer);
+        String result = template;
+        result = result.replace("{invoiceRef}", invoiceRef == null ? "" : invoiceRef);
+        result = result.replace("{date}", generatedDate);
+        result = result.replace("{customer}", customer);
+        return result;
     }
 }

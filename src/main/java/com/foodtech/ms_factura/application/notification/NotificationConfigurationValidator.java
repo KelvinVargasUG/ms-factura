@@ -7,7 +7,13 @@ import org.springframework.stereotype.Component;
 
 @Component
 @Slf4j
+@SuppressWarnings({"PMD.UnnecessaryConstructor", "PMD.LongVariable"})
 public class NotificationConfigurationValidator {
+
+    private static final String EMAIL_CHANNEL = "email";
+
+    public NotificationConfigurationValidator() {
+    }
 
     @Value("${notification.enabled:true}")
     private boolean notificationEnabled;
@@ -22,7 +28,7 @@ public class NotificationConfigurationValidator {
             return;
         }
 
-        if (!"email".equalsIgnoreCase(configuredChannel)) {
+        if (!EMAIL_CHANNEL.equalsIgnoreCase(configuredChannel)) {
             log.warn("Canal de notificación no soportado en esta versión: {}", configuredChannel);
         }
     }

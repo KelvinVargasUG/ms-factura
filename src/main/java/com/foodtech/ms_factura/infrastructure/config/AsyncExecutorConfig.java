@@ -6,7 +6,11 @@ import org.springframework.core.task.TaskExecutor;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
 @Configuration
+@SuppressWarnings("PMD.UnnecessaryConstructor")
 public class AsyncExecutorConfig {
+
+    public AsyncExecutorConfig() {
+    }
 
     @Bean(name = "notificationTaskExecutor")
     public TaskExecutor notificationTaskExecutor() {

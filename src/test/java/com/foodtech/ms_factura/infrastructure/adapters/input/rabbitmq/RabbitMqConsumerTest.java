@@ -1,20 +1,25 @@
 package com.foodtech.ms_factura.infrastructure.adapters.input.rabbitmq;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.foodtech.ms_factura.application.ports.input.GenerarFacturaUseCase;
-import com.foodtech.ms_factura.domain.Factura;
-import com.foodtech.ms_factura.domain.FoodEvent;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
+
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.doThrow;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.foodtech.ms_factura.application.ports.input.GenerarFacturaUseCase;
+import com.foodtech.ms_factura.domain.Factura;
+import com.foodtech.ms_factura.domain.FoodEvent;
 
+@SuppressWarnings({ "PMD.AtLeastOneConstructor", "PMD.LawOfDemeter", "PMD.SignatureDeclareThrowsException",
+        "PMD.LongVariable" })
+@Tag("integration")
 @ExtendWith(MockitoExtension.class)
 class RabbitMqConsumerTest {
 

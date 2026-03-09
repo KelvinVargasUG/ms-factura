@@ -7,10 +7,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
+@SuppressWarnings({"PMD.LawOfDemeter", "PMD.CyclomaticComplexity", "PMD.LongVariable", "PMD.AvoidCatchingGenericException"})
 public class NotificationDispatchService {
 
     private final List<NotificationChannel> notificationChannels;
@@ -22,33 +24,47 @@ public class NotificationDispatchService {
     private String configuredChannel;
 
     public void dispatch(NotificationMessage message) {
-        if (!notificationEnabled) {
+        boolean isEnabled = notificationEnabled;
+        if (!isEnabled && log.isInfoEnabled()) {
             log.info("Notificaciones deshabilitadas para invoiceRef={}", message.invoiceRef());
-            return;
         }
 
-        NotificationChannel channel = notificationChannels.stream()
-                .filter(candidate -> candidate.getChannelName().equalsIgnoreCase(configuredChannel))
+        NotificationChannel channel = isEnabled ? findChannel() : null;
+        if (isEnabled && channel == null && log.isWarnEnabled()) {
+            log.warn("Canal de notificación no soportado: {}", configuredChannel);
+        }
+
+        if (isEnabled && channel != null) {
+            sendNotification(channel, message);
+        }
+    }
+
+    private NotificationChannel findChannel() {
+        String channelName = configuredChannel.toLowerCase(Locale.ROOT);
+        return notificationChannels.stream()
+            .filter(candidate -> candidate.getChannelName().equalsIgnoreCase(channelName))
                 .findFirst()
                 .orElse(null);
+    }
 
-        if (channel == null) {
-            log.warn("Canal de notificación no soportado: {}", configuredChannel);
-            return;
-        }
-
+    private void sendNotification(NotificationChannel channel, NotificationMessage message) {
+        String channelName = channel.getChannelName();
         try {
             channel.send(message);
-            log.info("Notificación enviada OK canal={} invoiceRef={} destinatario={}",
-                    channel.getChannelName(),
-                    message.invoiceRef(),
-                    message.destinatario());
-        } catch (Exception exception) {
-            log.error("Fallo enviando notificación canal={} invoiceRef={} causa={}",
-                    channel.getChannelName(),
-                    message.invoiceRef(),
-                    exception.getMessage(),
-                    exception);
+            if (log.isInfoEnabled()) {
+                log.info("Notificación enviada OK canal={} invoiceRef={} destinatario={}",
+                        channelName,
+                        message.invoiceRef(),
+                        message.destinatario());
+            }
+        } catch (RuntimeException exception) {
+            if (log.isErrorEnabled()) {
+                log.error("Fallo enviando notificación canal={} invoiceRef={} causa={}",
+                        channelName,
+                        message.invoiceRef(),
+                        exception.getMessage(),
+                        exception);
+            }
         }
     }
 }
